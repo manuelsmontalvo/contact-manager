@@ -1,6 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import AlertContext from "../../context/alert/alertContext";
+import AuthContext from "../../context/auth/authContext";
 
-function Login() {
+function Login(props) {
+  const authContext = useContext(AuthContext);
+  const alertContext = useContext(AlertContext);
+
+  const { setAlert } = alertContext;
+
+  const { loginUser, error, clearErrors, isAuthenticated } = authContext;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      props.history.push("/");
+    }
+    if (error === "Invalid Credentials") {
+      setAlert(error, "danger");
+      clearErrors();
+    }
+    // eslint-disable-next-line
+  }, [error, isAuthenticated, props.history]);
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -9,12 +29,19 @@ function Login() {
   const { email, password } = user;
 
   const onChange = (e) => {
-    setUser({ ...user, [e.tatget.name]: e.tatget.value });
+    setUser({ ...user, [e.target.name]: e.target.value })
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log("Login submit");
+    if (email === "" || password === "") {
+      setAlert("Please fill in all fields", "danger");
+    } else {
+      loginUser({
+        email,
+        password,
+      });
+    }
   };
 
   return (
@@ -25,7 +52,13 @@ function Login() {
       <form onSubmit={onSubmit}>
         <div className='form-group'>
           <label htmlFor='email'>Email</label>
-          <input type='email' name='email' value={email} onChange={onChange} />
+          <input
+            type='email'
+            name='email'
+            value={email}
+            onChange={onChange}
+            required
+          />
         </div>
         <div className='form-group'>
           <label htmlFor='password'>Password</label>
@@ -34,6 +67,7 @@ function Login() {
             name='password'
             value={password}
             onChange={onChange}
+            required
           />
         </div>
 
