@@ -10,7 +10,7 @@ import {
   AUTH_ERROR,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  // LOGOUT,
+  LOGOUT,
   CLEAR_ERRORS,
 } from "../types";
 
@@ -96,7 +96,9 @@ const AuthState = (props) => {
 
   // Logout
   const logoutUser = () => {
-    console.log("logout user");
+    dispatch({
+      type: LOGOUT,
+    });
   };
 
   // Clear Errors
